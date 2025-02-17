@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ukk_2025/main.dart';  // Pastikan import ini tetap ada
+import 'package:ukk_2025/main.dart';  
 
 void main() {
-  runApp(Login());  // Memulai aplikasi dengan LoginPage
+  runApp(Login()); 
 }
 
 class Login extends StatefulWidget {
@@ -38,15 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ),
     PelanganTab(),
-    ProdukTab(),
     PenjualanTab(),
+    ProdukTab(),
   ];
 
   final List<String> _titles = [
-    'Halaman Detail Penjualan',
-    'Halaman Pelanggan',
     'Halaman Produk',
-    'Halaman Penjualan'
+    'Halaman Pelanggan',
+    'Halaman Penjualan',
+    'Halaman Detail Penjualan'
   ];
 
   void _onTabTapped(int index) {
@@ -81,8 +81,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.app_registration),
-              title: Text('Registrasi'),
+              leading: Icon(Icons.person),
+              title: Text('User'),
               onTap: () {
                 Navigator.pop(context);
               },

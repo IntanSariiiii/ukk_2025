@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ukk_2025/homepage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+String supabaseUrl = "https://xqycaxmguymimbbprzrr.supabase.co";
+String supabaseAnonKey =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxeWNheG1ndXltaW1iYnByenJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MDg2NTEsImV4cCI6MjA1NDk4NDY1MX0.SFUP7WFH9cgMITWGqulapAFJAn8vFC5H9Tu5vunOzfw";
 
 void main() async {
   await Supabase.initialize(
-    url: 'https://xqycaxmguymimbbprzrr.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxeWNheG1ndXltaW1iYnByenJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0MDg2NTEsImV4cCI6MjA1NDk4NDY1MX0.SFUP7WFH9cgMITWGqulapAFJAn8vFC5H9Tu5vunOzfw',
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -17,10 +21,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
       home: const LoginPage(),
     );
   }
@@ -37,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final supabase = Supabase.instance.client;
   bool _isPasswordVisible = false;
 
   Future<void> _login() async {
@@ -44,11 +45,28 @@ class _LoginPageState extends State<LoginPage> {
       final username = _usernameController.text;
       final password = _passwordController.text;
 
-      // Implementasi logika login bisa ditambahkan di sini.
-      // Misalnya, panggil API atau database untuk verifikasi username dan password.
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login Berhasil!')),
-      );
+      try {
+        final response = await supabase
+            .from('user')
+            .select('username,password')
+            .eq('username', username)
+            .single();
+
+        if (response != null && response['password'] == password) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Username atau Password Salah!')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Terjadi Kesalahan: $e')),
+        );
+      }
     }
   }
 
@@ -56,68 +74,62 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Header Login dengan gradiasi Biru & Ungu
-            Container(
-              height: MediaQuery.of(context).size.height * 0.60,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blue, Colors.purple],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.60,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.purple, Colors.black],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(60),
-                  bottomRight: Radius.circular(60),
-                ),
-              ),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.admin_panel_settings, size: 100, color: Colors.white), // Ikon Admin
-                    SizedBox(height: 20),
-                    Text(
-                      'SIGN IN',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                child: const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.admin_panel_settings, size: 185, color: Colors.white),
+                      SizedBox(height: 20),
+                      Text(
+                        'SIGN IN',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 8,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Form(
-                    key: _formKey,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade300,
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        // Input Username
                         TextFormField(
                           controller: _usernameController,
                           decoration: InputDecoration(
                             labelText: 'Username',
                             prefixIcon: const Icon(Icons.person),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                           validator: (value) {
@@ -128,7 +140,6 @@ class _LoginPageState extends State<LoginPage> {
                           },
                         ),
                         const SizedBox(height: 16),
-                        // Input Password
                         TextFormField(
                           controller: _passwordController,
                           obscureText: !_isPasswordVisible,
@@ -148,45 +159,40 @@ class _LoginPageState extends State<LoginPage> {
                               },
                             ),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "Masukkan Password";
+                              return "Masukkan password";
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 30),
-                        // Button Login
+                        const SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: _login,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 60,
-                              vertical: 18,
-                            ),
+                            backgroundColor: Colors.purple[700],
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                             ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 15),
                           ),
+                          onPressed: _login,
                           child: const Text(
                             'LOGIN',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
