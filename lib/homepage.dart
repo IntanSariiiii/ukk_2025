@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ukk_2025/main.dart';  
+import 'package:ukk_2025/Pelanggan/indexpelanggan.dart';
+import 'package:ukk_2025/Penjualan/indexpenjualan.dart';
+import 'package:ukk_2025/Produk/indexproduk.dart';
 
 void main() {
   runApp(Login()); 
@@ -94,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginPage(),
+                    builder: (context) => HomeScreen(),
                   ),
                 );
               },

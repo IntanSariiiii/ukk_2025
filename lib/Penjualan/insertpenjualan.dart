@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ukk_2025/homepage.dart';
 import 'package:ukk_2025/penjualan/indexpenjualan.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -34,7 +35,7 @@ class _AddTransaksiState extends State<AddTransaksi> {
           );
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => PenjualanTab()),
+            MaterialPageRoute(builder: (context) => AddTransaksi()),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

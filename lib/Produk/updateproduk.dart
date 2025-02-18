@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ukk_2025/Produk/insertproduk.dart';
+import 'package:ukk_2025/homepage.dart';
 import 'package:ukk_2025/produk/indexproduk.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -65,7 +67,7 @@ class _UpdateprodukState extends State<Updateproduk> {
 
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => ProdukTab()),
+          MaterialPageRoute(builder: (context) => addproduk()),
           (route) => false,
         );
       } catch (error) {

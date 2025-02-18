@@ -112,7 +112,7 @@ class _PenjualanTabState extends State<PenjualanTab> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => PenjualanUpdate(pelangganid: penjualanid)
+                                            builder: (context) => penjualanid(pelangganid: penjualanid)
                                           ),
                                         );
                                       } else {
